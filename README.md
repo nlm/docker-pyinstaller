@@ -34,6 +34,12 @@ The builder does its duty and you will find the result in the `./data/dist` dire
     # ./data/dist/hello
     Hello, World!
 
+Packages Requirements
+---------------------
+
+If your script requires additional packages, just add `requirements.txt` file containing
+all the packages you need. They will be installed prior to the build.
+
 Customizing the build
 ---------------------
 

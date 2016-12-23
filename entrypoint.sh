@@ -7,6 +7,10 @@ cmd_usage()
 
 cmd_build()
 {
+        if [ -f "requirements.txt" ]
+	then
+		"$PYTHON" -m pip install -r requirements.txt
+	fi
 	exec pyinstaller $@
 }
 
