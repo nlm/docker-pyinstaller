@@ -48,5 +48,5 @@ the `PYTHON_VERSION` and `PYINSTALLER_VERSION` build args.
 
 Example:
 
-    # docker build -t pyinstaller --build-arg PYTHON_VERSION=2.7 .
+    # docker build -t pyinstaller:python2.7 --build-arg PYTHON_VERSION=2.7 .
 
