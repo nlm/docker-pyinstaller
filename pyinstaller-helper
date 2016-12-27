@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+import argparse
+import os
+import yaml
+from schema import Schema, Optional
+
+
+class PyInstallerHelper(object):
+
+    schema = {Optional('requirements'): [str],
+              Optional('install'): [str],
+              Optional('build'): [str]}
+
+    def __init__(self, data):
+        self.data = Schema(self.schema).validate(data)
+
+    def run_command(self, cmd, dry_run=False):
+        print(cmd)
+        if dry_run:
+            return 0
+        return os.system(cmd)
+
+    def install_requirements(self, dry_run=False):
+        if 'requirements' in self.data:
+            requirements = self.data.get('requirements')
+            cmd = 'pip install {0}'.format(' '.join(requirements))
+            return self.run_command(cmd)
+
+    def run_items(self, key, dry_run=False):
+        for cmd in self.data.get(key, []):
+            if self.run_command(cmd, dry_run) != 0:
+                raise RuntimeError('{0} exited with non-zero status'
+                                   .format(cmd))
+
+
+def main(arguments=None):
+    parser = argparse.ArgumentParser()
+    #parser.add_argument('-C', default=False, action='store_true', help'lol')
+    parser.add_argument('-n', '--dry-run',
+                        action='store_true', default=False,
+                        help='no not really run commands, only show what would be run')
+    parser.add_argument('filename', help='a pyinstaller.yml file',
+                        type=argparse.FileType('r'))
+
+    args = parser.parse_args(arguments)
+    data = yaml.load(args.filename)
+    pih = PyInstallerHelper(data)
+    pih.install_requirements(dry_run=args.dry_run)
+    pih.run_items('install', dry_run=args.dry_run)
+    pih.run_items('build', dry_run=args.dry_run)
+
+if __name__ == '__main__':
+    main()
